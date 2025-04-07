@@ -2,6 +2,8 @@ import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
+//NEW COMMENT TO TRIGGER NEW WORK FLOW 
+
 export default function App() {
   const [formData, setFormData] = useState({
     email: "",
@@ -29,7 +31,7 @@ export default function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitted Data:", formData);
-    // Add API call here if needed
+    // Add API call here 
   };
 
   return (
