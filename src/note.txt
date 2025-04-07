@@ -1,0 +1,15 @@
+{
+  "concertId": 10,
+  "email": "user@example.com",
+  "name": "Bob Ross",
+  "phone": "9025551224",
+  "quantity": 1,
+  "creditCard": "4242424242424242",
+  "expiry": "1227",
+  "securityCode": "123",
+  "address": "string",
+  "city": "string",
+  "province": "string",
+  "postalCode": "string",
+  "country": "string"
+}
