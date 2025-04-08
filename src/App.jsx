@@ -1,16 +1,36 @@
 import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import concertImage from './assets/concert.jpg';
 
 export default function App() {
+
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      quantity: 1,
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      city: "",
+      province: "",
+      postalCode: "",
+      country: "",
+      creditCard: "",
+      expiry: "",
+      securityCode: "",
+      concertID: "10"   
+    }
+    });
 
   const onSubmit = async (data) => {
     console.log("Submitted Data:", data);
@@ -27,16 +47,18 @@ export default function App() {
       );
 
       console.log("Success:", response.data);
-      alert("Ticket Purchase Successful!");
       reset(); // Clears the form
-      // TODO: Navigate to a success page if needed
+      navigate('/success');
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting form:", error.response || error.message);
+      const errorMessage = error?.response?.data?.message || error.message || "Unknown error";
+      navigate('/failure', { state: { error: errorMessage } });
     }
   };
 
   return (
     <div className="container my-5 p-5 rounded-4">
+      <h2 className="fw-bold text-center mb-3" style={{ color: '#6c3483' }}>One last step before you can be a part of the music! </h2>
       <div className="row justify-content-center align-items-center">
         <div className="col-md-10">
           <div className="card flex-row shadow-lg border-0 overflow-hidden" style={{ borderRadius: '20px' }}>
@@ -52,6 +74,8 @@ export default function App() {
             <div className="col-md-6 p-4">
               <h2 className="fw-bold text-center mb-3" style={{ color: '#6c3483' }}>Payment Details</h2>
               <form onSubmit={handleSubmit(onSubmit)}>
+              <input type="hidden" {...register("concertID")} />
+                {/* QUANTITY */}
                 <div className="mb-3">
                   <label className="form-label">Quantity</label>
                     <input
@@ -71,6 +95,7 @@ export default function App() {
                       <span className="text-danger">{errors.quantity.message}</span>
                     )}
                 </div>
+                {/* NAME */}
                 <div className="mb-3">
                   <label className="form-label">Full Name</label>
                   <input
@@ -81,18 +106,24 @@ export default function App() {
                   />
                   {errors.name && <span className="text-danger">{errors.name.message}</span>}
                 </div>
-
+                {/*  EMAIL */}
                 <div className="mb-3">
                   <label className="form-label">Email</label>
                   <input
                     type="email"
                     placeholder="Enter your email"
                     className="form-control"
-                    {...register("email", { required: "Email is required" })}
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^\S+@\S+$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
                   />
                   {errors.email && <span className="text-danger">{errors.email.message}</span>}
                 </div>
-
+                {/* PHONE NUMBER */}
                 <div className="mb-3">
                   <label className="form-label">Phone Number</label>
                   <input
@@ -109,7 +140,7 @@ export default function App() {
                   />
                   {errors.phone && <span className="text-danger">{errors.phone.message}</span>}
                 </div>
-
+                {/* ADDRESS */}
                 <div className="mb-3">
                   <label className="form-label">Address</label>
                   <input
@@ -118,9 +149,9 @@ export default function App() {
                     className="form-control"
                     {...register("address", { required: "Address is required" })}
                   />
-                  {errors.phone && <span className="text-danger">{errors.address.message}</span>}
+                  {errors.address && <span className="text-danger">{errors.address.message}</span>}
                 </div>
-
+                {/* CITY */}
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label">City</label>
@@ -132,6 +163,7 @@ export default function App() {
                     />
                     {errors.city && <span className="text-danger">{errors.city.message}</span>}
                   </div>
+                  {/* PROVINCE */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Province/State</label>
                     <input
@@ -143,7 +175,7 @@ export default function App() {
                     {errors.province && <span className="text-danger">{errors.province.message}</span>}
                   </div>
                 </div>
-
+                {/* POSTAL CODE */}
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Postal Code</label>
@@ -151,10 +183,16 @@ export default function App() {
                       type="text"
                       placeholder="PostalCode"
                       className="form-control"
-                      {...register("postalCode", { required: "postal code is required" })}
+                      {...register("postalCode", { required: "postal code is required",  maxLength: {
+                        value: 6,
+                        message: "Postal Code cannot be more than 6 digits",
+                      }, 
+                      }
+                      )}
                     />
-                    {errors.country && <span className="text-danger">{errors.country.message}</span>}
+                    {errors.postalCode && <span className="text-danger">{errors.postalCode.message}</span>}
                   </div>
+                  {/* COUNTRY */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Country</label>
                     <input
@@ -166,7 +204,7 @@ export default function App() {
                     {errors.country && <span className="text-danger">{errors.country.message}</span>}
                   </div>
                 </div>
-
+                {/* CARD NUMBER */}
                 <div className="mb-3">
                   <label className="form-label">Credit Card Number</label>
                   <input
@@ -180,19 +218,23 @@ export default function App() {
                   />
                   {errors.creditCard && <span className="text-danger">{errors.creditCard.message}</span>}
                 </div>
-
+                {/* EXPIRY DATE */}
                 <div className="mb-3">
-                  <label className="form-label">Expiry Date (MM/YY)</label>
+                  <label className="form-label">Expiry Date (MMYY)</label>
                   <input
                     type="text"
                     className="form-control"
                     {...register("expiry", {
-                      required: true,
-                      pattern: /^(0[1-9]|1[0-2])\/\d{2}$/,
+                      required: "Expiry must be 4 digits (MMYY)",
+                      maxLength: {
+                        value: 4,
+                        message: "Expiry cannot be more than 4 digits",
+                      },
                     })}
                   />
+                  {errors.expiry && <span className="text-danger">Invalid expiry date format (MMYY)</span>}
                 </div>
-
+              {/* SECURITY CODE */}
                 <div className="mb-3">
                   <label className="form-label">Security Code</label>
                   <input
@@ -208,7 +250,7 @@ export default function App() {
                       },
                     })}
                   />
-                  {errors.SecurityCode && <span className="text-danger">{errors.SecurityCode.message}</span>}
+                  {errors.securityCode && <span className="text-danger">{errors.securityCode.message}</span>}
                 </div>
 
                 <button
