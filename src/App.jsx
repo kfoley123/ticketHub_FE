@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import concertImage from './assets/concert.jpg';
+import concertImage from './assets/poster.jpg';
 
 export default function App() {
 
@@ -66,7 +66,7 @@ export default function App() {
               <img
                 src={concertImage}
                 alt="Concert"
-                className="img-fluid h-100 w-100 object-fit-cover"
+                className="img-fluid h-100 w-100 object-fit-contain"
                 style={{ objectFit: 'cover' }}
               />
             </div>
